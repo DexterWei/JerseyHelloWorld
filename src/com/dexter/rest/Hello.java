@@ -1,12 +1,22 @@
 package com.dexter.rest;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 import com.dexter.conversation;
+import com.dexter.dao.MongoDAO;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 
 @Path("/")
 public class Hello {
@@ -30,13 +40,24 @@ public class Hello {
 		return chats;
 	}
 	
+	@Path("/chats/json")
+	@GET
+	@Produces("application/json")
+	//try $curl --request GET 'http://localhost:8080/com.dexter.rest/rest/chats/json'
+	public Response ReturnAppJson(){
+		return Response.ok(chats).build();
+	}
+	
+	
 	@Path("/chats/post")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response CreateChatsJSON(conversation chat){
-		chats.get(chat.sender.charAt(0)-'1').add(chat);
-		String rst=""+chats.get(chat.sender.charAt(0)-'1');
-		return Response.status(201).entity(rst).build();
+	public Response CreateChatsJSON(String objString) throws UnknownHostException, JSONException {
+		MongoDAO dao = new MongoDAO();
+		MongoDAO.Connect();
+		JSONObject obj = new JSONObject(objString);
+		MongoDAO.InsertJson(obj);
+		return Response.status(201).entity(obj.toString()).build();
 	}
 	
 }
