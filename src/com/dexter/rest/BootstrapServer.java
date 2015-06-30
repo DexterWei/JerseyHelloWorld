@@ -19,12 +19,12 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 
 @Path("/")
-public class Hello {
+public class BootstrapServer{
 	
-	@Path("/chats/post")
+	@Path("/bootstrap")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response CreateChatsJSON(String objString) throws UnknownHostException, JSONException {
+	public Response Bootstrap(String objString) throws UnknownHostException, JSONException {
 		MongoDAO dao = new MongoDAO();
 		MongoDAO.Connect();
 		JSONObject obj = new JSONObject(objString);
